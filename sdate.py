@@ -6,7 +6,8 @@ import datetime
 import time
 import argparse
 
-def main():
+
+def main() -> None:
     args, positional = parse_args()
 
     if args.help:
@@ -56,6 +57,8 @@ def main():
         res = res.replace('%b', now.replace(month=epoch_month).strftime('%b'))
         res = res.replace('%Y', str(epoch_year))
         res = res.replace('%y', str(epoch_year)[-2:])
+        # Explicit support for high-resolution system clock microseconds because...why not?
+        res = res.replace('%f', f"{now.microsecond:06d}")
 
         # Render remaining tokens like standard (like %H, %M, %S, etc)
         # This is the thing that actually prints out the time
@@ -65,7 +68,7 @@ def main():
         month_name = now.replace(month=epoch_month).strftime('%b')
         print(f"{weekday} {month_name} {days_passed:,} {time_str} {tz_str} {epoch_year}")
 
-def parse_args():
+def parse_args() -> tuple[argparse.Namespace, list[str]]:
     # Setup parser to mimick the original sdate
     parser = argparse.ArgumentParser(
         description="sdate: Neverending September date tool clone",
